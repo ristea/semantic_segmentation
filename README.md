@@ -1,2 +1,2 @@
 # semantic_segmentation
-PAIC Project
+SCCV Project
