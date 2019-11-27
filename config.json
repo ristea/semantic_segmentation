@@ -1,0 +1,16 @@
+{
+  "exp_name": "test",
+  "exp_path": "/Volumes/Partition1/Projects/semantic_segmentation/exp_results",
+  "data_path": "/Users/cristea/Downloads/VOCdevkit 2/VOC2012",
+
+  "use_cuda": false,
+  "n_channels": 3,
+  "n_classes": 21,
+
+  "train_epochs": 100,
+  "batch_size": 1,
+  "eval_net_epoch": 1,
+  "save_net_epochs": 2,
+
+  "print_loss": 10
+}
