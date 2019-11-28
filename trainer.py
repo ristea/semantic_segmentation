@@ -1,6 +1,8 @@
 import torch
 import numpy as np
 import os
+from tqdm import tqdm
+from utils.metrics import Evaluator
 
 
 class Trainer:
@@ -14,6 +16,7 @@ class Trainer:
         self.optimizer = optimizer
         self.visualizer = visualizer
         self.experiment_name = experiment_name
+        self.evaluator = Evaluator(config['n_classes'])
 
     def train_epoch(self, epoch):
         running_loss = []
@@ -80,3 +83,36 @@ class Trainer:
     def save_net_state(self, epoch):
         path_to_save = os.path.join(self.config['exp_path'], self.experiment_name, 'model_epoch_' + str(epoch) + '.pkl')
         torch.save(self.network, path_to_save)
+
+    def validation(self, epoch):
+        self.network.eval()
+        self.evaluator.reset()
+
+        tbar = tqdm(self.eval_dataloader, desc='\r')
+        test_loss = 0.0
+
+        for i, sample in enumerate(tbar):
+            image, target = sample['image'], sample['label']
+            if self.config['use_cuda']:
+                image, target = image.cuda(), target.cuda()
+            with torch.no_grad():
+                output = self.network(image)
+            loss = self.criterion(output, target)
+            test_loss += loss.item()
+            tbar.set_description('Test loss: %.3f' % (test_loss / (i + 1)))
+            pred = output.data.cpu().numpy()
+            target = target.cpu().numpy()
+            pred = np.argmax(pred, axis=1)
+            # Add batch sample into evaluator
+            self.evaluator.add_batch(target, pred)
+
+        # Fast test during the training
+        Acc = self.evaluator.Pixel_Accuracy()
+        Acc_class = self.evaluator.Pixel_Accuracy_Class()
+        mIoU = self.evaluator.Mean_Intersection_over_Union()
+        FWIoU = self.evaluator.Frequency_Weighted_Intersection_over_Union()
+
+        print('Validation:')
+        print('[Epoch: %d]' % epoch)
+        print("Acc:{}, Acc_class:{}, mIoU:{}, fwIoU: {}".format(Acc, Acc_class, mIoU, FWIoU))
+        print('Loss: %.3f' % test_loss)

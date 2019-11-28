@@ -1,3 +1,4 @@
+tqdm
 h5py==2.10.0
 hdf5storage==0.1.15
 jsonpatch==1.24

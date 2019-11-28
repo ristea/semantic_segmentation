@@ -35,3 +35,14 @@ class DataManager:
         val_loader = DataLoader(val_set, batch_size=self.config['batch_size'], num_workers=8, shuffle=False)
 
         return train_loader, val_loader
+
+    # def get_view_eval_dl(self):
+    #     target_transform = extended_transforms.MaskToTensor()
+    #
+    #     input_transform = standard_transforms.Compose([
+    #         standard_transforms.ToTensor(),
+    #         standard_transforms.Normalize(*self.mean_std)
+    #     ])
+    #
+    #     val_set = VOC(self.config['data_path'], 'val', transform=input_transform, target_transform=target_transform)
+    #     val_loader = DataLoader(val_set, batch_size=self.config['batch_size'], num_workers=8, shuffle=False)
