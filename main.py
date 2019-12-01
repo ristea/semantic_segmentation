@@ -14,11 +14,11 @@ def main():
 
     experiment_name = 'Fully Conv'
     vis_legend = ['Training Loss', 'Eval Loss']
-    visualizer = VisdomVisualizer(experiment_name, vis_legend)
+    visualizer = VisdomVisualizer(experiment_name, vis_legend, config=config)
 
     model = UNet(n_channels=config['n_channels'], n_classes=config['n_classes'])
     criterion = SegmentationLosses().build_loss(mode='ce')
-    optimizer = optim.SGD(model.parameters(), lr=0.0001, momentum=0.9)
+    optimizer = optim.SGD(model.parameters(), lr=0.00001, momentum=0.9)
 
     data_manager = DataManager(config)
     train_loader, val_loader = data_manager.get_train_eval_dataloaders()

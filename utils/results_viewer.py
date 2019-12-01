@@ -5,6 +5,7 @@ from PIL import Image
 
 from data.data_manager import DataManager
 
+
 def create_mask(labels, palette):
     h, w = labels.shape
     img = np.zeros((h, w, 3))
@@ -19,6 +20,7 @@ def create_mask(labels, palette):
             except:
                 img[row][col] = (255, 255, 255)
     return img
+
 
 def get_k_predictions(predictions, k):
     pred1 = np.argmax(predictions, axis=0)

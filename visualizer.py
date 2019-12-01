@@ -1,9 +1,12 @@
 from visdom import Visdom
+from utils.results_viewer import create_mask
+import numpy as np
 import torch
 
 
 class VisdomVisualizer:
-    def __init__(self, plot_title, vis_legend, _xlabel='Epoch', _ylabel='Loss'):
+    def __init__(self, plot_title, vis_legend, _xlabel='Epoch', _ylabel='Loss', config=None):
+        self.config = config
         # For getting rid of spikes
         self.last_loss1_value = 0
         self.last_loss2_value = 0
@@ -39,3 +42,15 @@ class VisdomVisualizer:
             self.last_loss1_value = loss1
         if loss2 != 0:
             self.last_loss2_value = loss2
+
+    def update_images(self, prediction, label):
+        pred = prediction.detach().cpu().numpy()[0]
+        pred = np.argmax(pred, axis=0)
+
+        label = label.detach().cpu().numpy()[0]
+
+        label = create_mask(label, palette=self.config['palette'])
+        pred = create_mask(pred, palette=self.config['palette'])
+
+        self.viz.image(np.moveaxis(label, 2, 0), win='Label')
+        self.viz.image(np.moveaxis(pred, 2, 0), win='Prediction')

@@ -41,6 +41,9 @@ class Trainer:
                 running_loss = np.mean(np.array(running_loss))
                 self.visualizer.update_statistics(idx + len(self.train_dataloader) * epoch,
                                                   loss1=running_loss, loss2=None)
+
+                self.visualizer.update_images(predictions, labels)
+
                 print(f'Training loss on iteration {idx} = {running_loss}')
                 running_loss = []
 
@@ -62,6 +65,8 @@ class Trainer:
         running_eval_loss = running_eval_loss / len(self.eval_dataloader)
         self.visualizer.update_statistics(iteration=len(self.train_dataloader) * (epoch + 1),
                                           loss1=None, loss2=running_eval_loss)
+
+        self.visualizer.update_images(predictions_, labels_)
         print(f'### Evaluation loss on epoch {epoch} = {running_eval_loss}')
 
     def train(self):

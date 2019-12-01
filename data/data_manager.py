@@ -28,10 +28,12 @@ class DataManager:
         #     standard_transforms.ToTensor()
         # ])
 
-        train_set = VOC(self.config['data_path'], 'train', transform=input_transform, target_transform=target_transform)
+        train_set = VOC(self.config['data_path'], 'train', transform=input_transform, target_transform=target_transform,
+                        rezise=self.config['resize_to'])
         train_loader = DataLoader(train_set, batch_size=self.config['batch_size'], num_workers=8, shuffle=True)
 
-        val_set = VOC(self.config['data_path'], 'val', transform=input_transform, target_transform=target_transform)
+        val_set = VOC(self.config['data_path'], 'val', transform=input_transform, target_transform=target_transform,
+                      rezise=self.config['resize_to'])
         val_loader = DataLoader(val_set, batch_size=self.config['batch_size'], num_workers=8, shuffle=False)
 
         return train_loader, val_loader

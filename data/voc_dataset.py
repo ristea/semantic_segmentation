@@ -53,11 +53,12 @@ def make_dataset(mode, root):
 
 
 class VOC(data.Dataset):
-    def __init__(self, data_path, mode, joint_transform=None, sliding_crop=None, transform=None, target_transform=None):
+    def __init__(self, data_path, mode, joint_transform=None, sliding_crop=None, transform=None, target_transform=None, rezise=None):
         self.imgs = make_dataset(mode, data_path)
         if len(self.imgs) == 0:
             raise RuntimeError('Found 0 images, please check the data set')
         self.mode = mode
+        self.resize = rezise
         self.joint_transform = joint_transform
         self.sliding_crop = sliding_crop
         self.transform = transform
@@ -74,6 +75,10 @@ class VOC(data.Dataset):
         img_path, mask_path = self.imgs[index]
         img = Image.open(img_path).convert('RGB')
         mask = Image.open(mask_path)
+
+        if self.resize is not None:
+            img = img.resize(self.resize)
+            mask = mask.resize(self.resize)
 
         if self.joint_transform is not None:
             img, mask = self.joint_transform(img, mask)
