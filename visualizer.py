@@ -43,7 +43,7 @@ class VisdomVisualizer:
         if loss2 != 0:
             self.last_loss2_value = loss2
 
-    def update_images(self, prediction, label):
+    def update_images(self, prediction, label, eval=False):
         pred = prediction.detach().cpu().numpy()[0]
         pred = np.argmax(pred, axis=0)
 
@@ -51,6 +51,10 @@ class VisdomVisualizer:
 
         label = create_mask(label, palette=self.config['palette'])
         pred = create_mask(pred, palette=self.config['palette'])
+
+        if eval is True:
+            self.viz.image(np.moveaxis(label, 2, 0), win='Eval Label')
+            self.viz.image(np.moveaxis(pred, 2, 0), win='Eval Prediction')
 
         self.viz.image(np.moveaxis(label, 2, 0), win='Label')
         self.viz.image(np.moveaxis(pred, 2, 0), win='Prediction')

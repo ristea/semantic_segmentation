@@ -66,7 +66,7 @@ class Trainer:
         self.visualizer.update_statistics(iteration=len(self.train_dataloader) * (epoch + 1),
                                           loss1=None, loss2=running_eval_loss)
 
-        self.visualizer.update_images(predictions_, labels_)
+        self.visualizer.update_images(predictions_, labels_, evaluation=True)
         print(f'### Evaluation loss on epoch {epoch} = {running_eval_loss}')
 
     def train(self):
@@ -80,7 +80,7 @@ class Trainer:
             self.train_epoch(i)
 
             if i % self.config['eval_net_epoch'] == 0:
-                self.eval_net(i)
+                self.validation(i)
 
             if i % self.config['save_net_epochs'] == 0:
                 self.save_net_state(i)
@@ -94,22 +94,27 @@ class Trainer:
         self.evaluator.reset()
 
         tbar = tqdm(self.eval_dataloader, desc='\r')
-        test_loss = 0.0
+        test_loss = []
 
-        for i, sample in enumerate(tbar):
-            image, target = sample['image'], sample['label']
+        for i, (image, target) in enumerate(tbar):
             if self.config['use_cuda']:
                 image, target = image.cuda(), target.cuda()
             with torch.no_grad():
                 output = self.network(image)
             loss = self.criterion(output, target)
-            test_loss += loss.item()
-            tbar.set_description('Test loss: %.3f' % (test_loss / (i + 1)))
+            test_loss.append(loss.item())
+            tbar.set_description('Test loss: %.3f' % loss.item())
             pred = output.data.cpu().numpy()
             target = target.cpu().numpy()
             pred = np.argmax(pred, axis=1)
             # Add batch sample into evaluator
             self.evaluator.add_batch(target, pred)
+
+        test_loss = np.mean(np.array(test_loss))
+        self.visualizer.update_statistics(iteration=len(self.train_dataloader) * (epoch + 1),
+                                          loss1=None, loss2=test_loss)
+        # self.visualizer.update_images(output, target, evaluation=True)
+
 
         # Fast test during the training
         Acc = self.evaluator.Pixel_Accuracy()
