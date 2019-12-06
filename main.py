@@ -11,6 +11,12 @@ from networks.unet_v2 import UNetV2
 import torch
 
 
+def init_weights(m):
+    if type(m) == torch.nn.Conv2d:
+        torch.nn.init.xavier_uniform_(m.weight)
+        m.bias.data.fill_(0.0001)
+
+
 def main():
     config = json.load(open('./config.json'))
 
@@ -19,6 +25,7 @@ def main():
     visualizer = VisdomVisualizer(experiment_name, vis_legend, config=config)
 
     model = UNetV2(n_channels=config['n_channels'], n_classes=config['n_classes'])
+    model.apply(init_weights)
 
     weights = torch.ones(21)
     if config['use_cuda'] is True:
