@@ -7,7 +7,7 @@ from trainer import Trainer
 from utils.losses import SegmentationLosses
 from visualizer import VisdomVisualizer
 from networks.unet import UNet
-from networks.unet_v2 import UNetV2
+from networks.unet_v3 import UNetV3
 import torch
 
 
@@ -24,7 +24,7 @@ def main():
     vis_legend = ['Training Loss', 'Eval Loss']
     visualizer = VisdomVisualizer(experiment_name, vis_legend, config=config)
 
-    model = UNetV2(n_channels=config['n_channels'], n_classes=config['n_classes'])
+    model = UNetV3(n_channels=config['n_channels'], n_classes=config['n_classes'])
     model.apply(init_weights)
 
     weights = torch.ones(21)
