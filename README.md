@@ -3,9 +3,10 @@ SCCV Project
 
 Pentru a putea rula proiectul va trebuie un env cu python3.x
 Pentru asta recomandam urmatoarele comenzi:
-python3 -m venv virt_env
-. virt_env/bin/activate
-pip install -r requirements.txt
+
+- python3 -m venv virt_env
+- source virt_env/bin/activate
+- pip install -r requirements.txt
 
 Pentru a rula prima data aveti nevoie sa aveti deschis un server de visdom:
     python -m visdom.server
